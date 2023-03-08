@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+const Part = ({ course }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {course.name} {course.exercises}
     </div>
-  );
+  )
+}
+
+const Content = ({ course }) => {
+  return (
+    <div>
+      {parts.map(kurssi =>
+        <Part key={kurssi.id} course={kurssi} />
+      )}
+    </div>
+  )
+}
+
+const Header = ({ course }) => {
+  return (
+    <h1>{course.name}</h1>
+  )
+}
+
+const Course = ({ course }) => {
+  console.log('koko course', course)
+
+  return (
+    <>
+      <Header course={course} />
+      <Content course={course.parts} />
+    </>
+  )
+}
+
+const App = () => {
+  const course = {
+    name: 'Half Stack application development',
+    id: 1,
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10,
+        id: 1
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7,
+        id: 2
+      },
+      {
+        name: 'State of a component',
+        exercises: 14,
+        id: 3
+      }
+    ]
+  }
+
+  return (
+    <div>
+      <Course course={course} />
+      <Content course={course} />
+    </div>
+  )
 }
 
 export default App;
