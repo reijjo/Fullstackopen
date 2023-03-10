@@ -19,16 +19,29 @@ const App = () => {
       })
   }, [])
 
+	console.log('idt', persons.length)
+
   const addName = (event) => {
     event.preventDefault();
     const nameObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      id: persons.length + 5
     }
-    if (persons.some(dobbel => dobbel.name === newName)) {
+    if (persons.some(dobbel => dobbel.name === newName && dobbel.number === newNumber)) {
       alert(`${newName} is already added to phonebook`)
     }
+    else if (persons.some(dobbel => dobbel.name === newName && dobbel.number !== newNumber)) {
+			const oldNum = persons.find(p => p.name === newName)
+			if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+				const newNum = { ...oldNum, number: newNumber}
+				personService
+				.updateNumber(oldNum.id, newNum)
+				.then(returnedPerson => {
+					setPersons(persons.map(person => person.id !== oldNum.id ? person : returnedPerson))
+				})
+			}
+		}
     else {
 			personService
 			.create(nameObject)
@@ -39,6 +52,22 @@ const App = () => {
       setNewName('')
       setNewNumber('')
   }
+
+	const delUser = (id) => {
+		const personsName = persons.find(person => person.id === id)
+		console.log(personsName.name)
+		if (window.confirm(`Delete ${personsName.name} ?`)) {
+			personService
+			.deleteUser(id)
+			.then(() => {
+				    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+			})
+		}
+	}
 
   const handleName = (event) => {
     setNewName(event.target.value)
@@ -61,7 +90,7 @@ const App = () => {
         addName={addName} newName={newName} handleName={handleName}
         newNumber={newNumber} handleNumber={handleNumber} />
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} delUser={delUser} />
     </div>
   )
 
