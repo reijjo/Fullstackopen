@@ -4,12 +4,14 @@ import personService from './services/persons';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('')
+	const [info, setInfo] = useState(null);
 
   useEffect(() => {
     personService
@@ -29,7 +31,13 @@ const App = () => {
       id: persons.length + 5
     }
     if (persons.some(dobbel => dobbel.name === newName && dobbel.number === newNumber)) {
-      alert(`${newName} is already added to phonebook`)
+      setInfo({
+				message: `${newName} is already added to phonebook`,
+				style: { color: 'red'}
+			})
+			setTimeout(() => {
+				setInfo(null)
+			}, 3000)
     }
     else if (persons.some(dobbel => dobbel.name === newName && dobbel.number !== newNumber)) {
 			const oldNum = persons.find(p => p.name === newName)
@@ -39,7 +47,23 @@ const App = () => {
 				.updateNumber(oldNum.id, newNum)
 				.then(returnedPerson => {
 					setPersons(persons.map(person => person.id !== oldNum.id ? person : returnedPerson))
+					setInfo({
+						message: `Updated ${newName}'s number.`,
+						style: { color: 'blue' }
+					})
+					setTimeout(() => {
+						setInfo(null)
+					}, 3000)
 				})
+				.catch(error => {
+					setInfo({
+						message: `Information of ${newName} has already been removed from server.`,
+						style: { color: 'red' }
+					})
+				})
+				setTimeout(() => {
+					setInfo(null)
+				}, 3000)
 			}
 		}
     else {
@@ -47,6 +71,13 @@ const App = () => {
 			.create(nameObject)
 			.then(returnedPerson => {
 				setPersons(persons.concat(returnedPerson))
+				setInfo({
+					message: `Added ${newName}`,
+					style: { color: 'green' }
+				})
+				setTimeout(() => {
+					setInfo(null)
+				}, 3000)
 			})
     }
       setNewName('')
@@ -64,6 +95,13 @@ const App = () => {
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
+				setInfo({
+					message: `Deleted ${personsName.name}`,
+					style: { color: 'red' }
+				})
+				setTimeout(() => {
+					setInfo(null)
+				}, 3000)
       })
 			})
 		}
@@ -84,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+			<Notification message={info} />
       <Filter filter={filter} handleFilter={handleFilter} />
       <h3>add a new</h3>
       <PersonForm
