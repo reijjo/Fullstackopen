@@ -3,7 +3,20 @@ const app = express();
 
 // console.log(request.headers) tal loytyy mitka headerit puuttuu!!
 
+const requestLogger = (req, res, next) => {
+	console.log('Method:', req.method)
+	console.log('Path: ', req.path)
+	console.log('Body :', req.body)
+	console.log('---')
+	next()
+}
+
+const unknownEndpoint = (request, response) => {
+	response.status(404).send({ error: 'unknown endpoint' })
+}
+
 app.use(express.json())
+app.use(requestLogger)
 
 let notes = [
   {
@@ -78,6 +91,9 @@ app.delete('/api/notes/:id', (req, res) => {
 
 	res.status(204).end()
 })
+
+
+app.use(unknownEndpoint)
 
 const PORT = 3001;
 app.listen(PORT, () => {
