@@ -1,13 +1,15 @@
-# fly.toml file generated for notefly on 2023-03-16T21:29:56+02:00
+# fly.toml file generated for reijjo on 2023-03-16T21:41:25+02:00
 
-app = "notefly"
+app = "reijjo"
 kill_signal = "SIGINT"
 kill_timeout = 5
-primary_region = "arn"
+primary_region = "ams"
 processes = []
 
+[build]
+  image = "flyio/hellofly:latest"
+
 [env]
-  PORT = "8080"
 
 [experimental]
   auto_rollback = true
