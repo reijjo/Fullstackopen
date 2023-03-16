@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const app = express();
 
 // app.use(morgan('dev', function (tokens, req, res) {
@@ -22,6 +23,7 @@ const unknownEndpoint = (req, res) => {
 }
 
 app.use(express.json());
+app.use(cors())
 
 let persons = [
 	{
