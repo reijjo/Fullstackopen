@@ -21,7 +21,6 @@ const updateNumber = (id, newObject) => {
 	return req.then(res => res.data)
 }
 
-
 const personService = { getAll, create, deleteUser, updateNumber }
 
 export default personService
