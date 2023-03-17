@@ -24,6 +24,7 @@ const unknownEndpoint = (req, res) => {
 
 app.use(express.json());
 app.use(cors())
+app.use(express.static('build'))
 
 let persons = [
 	{
@@ -129,7 +130,8 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.use(unknownEndpoint)
 
-const PORT = 3001;
+const PORT = process.env.PORT || "8080";
+// const PORT = 3001;
 app.listen(PORT, () => {
 	console.log(`Server on port ${PORT}.`)
 })
