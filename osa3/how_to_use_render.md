@@ -14,3 +14,6 @@
 
 # usage:
 	npm run deploy:full
+
+# HUOM .env file
+	laitetaan dashboardista

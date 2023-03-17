@@ -32,3 +32,9 @@
 
 # usage:
 npm run deploy:full
+
+# HUOM .env file
+	ja laita arvo komennolla:
+		fly secrets set MONGODB_URI='....'
+### suoraan fullstackopen sivulta:
+	Koska .env-tiedosto määrittelee myös ympäristömuuttujan PORT arvon, on .env:in ignorointi oikeastaan välttämätöntä jotta sovellus ei yritä käynnistää itseään väärään portiin.
