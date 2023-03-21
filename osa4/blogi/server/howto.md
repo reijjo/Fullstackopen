@@ -1,5 +1,17 @@
-## how to start
-	npm install eslint --save-dev
+# npm init add stuff to package.json scripts
+	"start": "node index.js",
+	"dev": "nodemon index.js",
+	"lint": "eslint .",
+
+## packages
+	npm install express
+	npm install mongoose
+	npm install cors
+	npm install dotenv
+	npm install --save-dev nodemon
+	npm install --save-dev eslint
+
+## eslint config
 	npx eslint --init
 	✔ How would you like to use ESLint? · problems
 	✔ What type of modules does your project use? · commonjs
@@ -8,8 +20,10 @@
 	✔ Where does your code run? · browser
 	✔ What format do you want your config file to be in? · JavaScript
 
-## add rules to .eslintrc.js
-	 'rules': {
+	=> add 'build' to .eslintignore file
+
+	=> add rules to .eslintrc.js file
+	'rules': {
         'indent': [
             'error',
             2
@@ -36,18 +50,29 @@
     		],
 				'no-console': 0,
     }
-
-### One file check
-	npx eslint index.js
-
-### add script to package.json file
-	"lint": "eslint ."
-
-### add .eslintignoge file
-	build
-
-### you can add eslint plugin to VSCode
-
-
-### usage:
+### how to use eslint:
 	npm run lint -- --fix
+
+## add .gitignore
+	node_modules
+	.env
+	.DS_Store
+
+## make folders
+	controllers
+	models
+	requests
+	utils
+
+## make files
+	app.js
+	index.js
+	.env
+
+# FILES
+## app.js
+
+## Utils folder make files:
+	config.js
+	logger.js
+	middleware.js
