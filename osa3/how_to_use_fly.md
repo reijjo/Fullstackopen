@@ -9,7 +9,7 @@
 
 ## NO postgres NO upstastash redis NO deploy now
 
-## Jotta sovellus saadaan konfiguroitua oikein, tulee tiedostoon konfiguraatioon ehkä tehdä pieni lisäys osiin [env]
+## Jotta sovellus saadaan konfiguroitua oikein, tulee tiedostoon 'fly.toml' tehdä pieni lisäys osiin [env]
 
 [env]
   PORT = "8080"
@@ -19,8 +19,14 @@
 	const PORT = process.env.PORT || "8080"
 
 
-## Start:
-	flyctl deploy
+
+# HUOM .env file
+	ja laita arvo komennolla:
+		fly secrets set MONGODB_URI='....'
+
+### suoraan fullstackopen sivulta:
+	Koska .env-tiedosto määrittelee myös ympäristömuuttujan PORT arvon, on .env:in ignorointi oikeastaan välttämätöntä
+	jotta sovellus ei yritä käynnistää itseään väärään portiin.
 
 # Lisaa scriptit backendin package.json fileen:
 		"build:ui": "rm -rf build && cd FRONTENDPATH && npm run build && cp -r build BACKENDPATH",
@@ -33,9 +39,5 @@
 # usage:
 npm run deploy:full
 
-# HUOM .env file
-	ja laita arvo komennolla:
-		fly secrets set MONGODB_URI='....'
-### suoraan fullstackopen sivulta:
-	Koska .env-tiedosto määrittelee myös ympäristömuuttujan PORT arvon, on .env:in ignorointi oikeastaan välttämätöntä
-	jotta sovellus ei yritä käynnistää itseään väärään portiin.
+## Start:
+	flyctl deploy

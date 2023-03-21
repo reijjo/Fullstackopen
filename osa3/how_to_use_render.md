@@ -1,10 +1,5 @@
 # Login render.com with GitHub
 
-## => New Web Service => Connect exisiting repository =>
-	copypastee backend osote siihen
-	=> Build Command: 'npm install'
-	=> Start Command: 'npm run dev'
-
 # Lisaa scriptit backendin package.json fileen:
 		"build:ui": "rm -rf build && cd FRONTENDPATH && npm run build && cp -r build BACKENDPATH",
     "deploy:full": "npm run build:ui && (cd GITREPOPATH && git add . && git commit -m uibuild && git push)"
@@ -17,3 +12,8 @@
 
 # HUOM .env file
 	laitetaan dashboardista
+
+## => New Web Service => Connect exisiting repository =>
+	copypastee backend osote siihen
+	=> Build Command: 'npm install'
+	=> Start Command: 'npm run dev'
