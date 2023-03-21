@@ -8,6 +8,7 @@
 	npm install mongoose
 	npm install cors
 	npm install dotenv
+	npm install morgan
 	npm install --save-dev nodemon
 	npm install --save-dev eslint
 
