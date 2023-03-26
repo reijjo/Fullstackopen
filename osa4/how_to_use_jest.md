@@ -39,3 +39,4 @@
 
 ## how to use:
 	npm test
+	npm test -- -t 'TESTNAME'
