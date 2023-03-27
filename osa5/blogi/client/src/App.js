@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
+
 import Blog from './components/Blog'
 import Loginform from './components/Loginform'
+import Newblog from './components/Newblog'
+import Notification from './components/Notification'
+
+
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -9,6 +14,10 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState('')
+	const [title, setTitle] = useState('')
+	const [author, setAuthor] = useState('')
+	const [url, setUrl] = useState('')
+	const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -21,6 +30,7 @@ const App = () => {
 		if (loggedIn) {
 			const user = JSON.parse(loggedIn)
 			setUser(user)
+			blogService.setToken(user.token)
 		}
 	}, [])
 
@@ -34,12 +44,20 @@ const App = () => {
 			window.localStorage.setItem(
 				'loggedIn', JSON.stringify(user)
 			)
+			blogService.setToken(user.token)
 			setUser(user)
 			setUsername('')
 			setPassword('')
 		}
 		catch (exception) {
-
+			// console.log('EXX', exception.response.data.error)
+			setErrorMessage({
+				message: exception.response.data.error,
+				style: { color: 'red' }
+			})
+			setTimeout(() => {
+				setErrorMessage(null);
+			}, 5000);
 		}
 		console.log('logging in with', username, password)
 	}
@@ -50,20 +68,73 @@ const App = () => {
 		window.location.reload()
 	}
 
-	console.log('USER', user)
+	const handleAddBlog = async (event) => {
+		event.preventDefault()
+		try {
+			const blog = await blogService.addBlog({
+				title, author, url
+			})
+			console.log('BLOG', blog.message)
+			setBlogs(blogs.concat(blog.savedBlog))
+			setTitle('')
+			setAuthor('')
+			setUrl('')
+			setErrorMessage({
+				message: blog.message,
+				style: { color: 'green' }
+			})
+			setTimeout(() => {
+				setErrorMessage(null)
+			}, 5000)
+		}
+		catch (exception) {
+			console.error('error when adding', exception)
+			setErrorMessage({
+				message: 'Something strange happened.',
+				style: { color: 'red' }
+			})
+			setTimeout(() => {
+				setErrorMessage(null)
+			}, 5000)
+		}
+	}
 
-  return (
+	const handleDeleteBlog = async (blogId) => {
+		try {
+			console.log('BLOGID', blogId)
+			await blogService.deleteBlog(blogId)
+			setBlogs(blogs.filter((blog) => blog.id !== blogId))
+		}
+		catch (error) {
+			console.error('Error deleting blog', error)
+			setErrorMessage({
+				message: error.response.data.error || 'Something went wrong while deleting the blog',
+				style: { color: 'red' }
+			})
+			setTimeout(() => {
+				setErrorMessage(null)
+			}, 5000)
+		}
+	}
+	// console.table(blogs.map(blog => blog.id))
+	return (
     <div>
 			{!user &&
 				<Loginform handleLogin={handleLogin}
 				username={username} setUsername={setUsername} password={password} setPassword={setPassword}
+				errorMessage={errorMessage}
 			/>}
 			{user &&
 				<>
 				  <h2>blogs</h2>
+					<Notification message={errorMessage} />
 					<p>{user.name} logged in <button onClick={logout}>log out</button></p>
+					<Newblog handleAddBlog={handleAddBlog} title={title} setTitle={setTitle}
+						 author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}
+						 errorMessage={errorMessage}
+					/>
 					{blogs.map(blog =>
-						<Blog key={blog.id} blog={blog} />
+						<Blog key={blog.id} blog={blog} handleDeleteBlog={handleDeleteBlog} />
 					)}
 				</>
 			}

@@ -1,8 +1,5 @@
 const blogRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const { usersInDb } = require('../tests/test_helper')
 
 // -- API/BLOGS
 
@@ -11,7 +8,7 @@ blogRouter.get('/', async (req, res) => {
 	res.json(blogs)
 })
 
-blogRouter.post('/', async (req, res, next) => {
+blogRouter.post('/', async (req, res) => {
 	const body = req.body
 	const user = req.user
 	if (!user) {
@@ -19,7 +16,7 @@ blogRouter.post('/', async (req, res, next) => {
   }
 
 	if (!body.likes) {
-		body.likes = 0;
+		body.likes = 0
 	}
 	else if (!body.title || !body.url) {
 		return res.status(400).json('Missing body parts.')
@@ -36,12 +33,18 @@ blogRouter.post('/', async (req, res, next) => {
 	const savedBlog = await blog.save()
 	user.blogs = user.blogs.concat(savedBlog._id)
 	await user.save()
-	res.status(201).json(savedBlog)
+	res.status(201).json({ savedBlog, message: `a new blog '${body.title}' by ${body.author}` })
 })
 
 // -- API/BLOGS/:ID
 
-blogRouter.put('/:id', async (req, res, next) => {
+blogRouter.get('/:id'), async (req, res) => {
+	const getIt = await Blog.findById(req.params.id)
+	console.log('controller', req.params.id)
+	res.json(getIt)
+}
+
+blogRouter.put('/:id', async (req, res) => {
 	const body = req.body
 
 	const blog = {
@@ -52,7 +55,7 @@ blogRouter.put('/:id', async (req, res, next) => {
 	res.json(updated)
 })
 
-blogRouter.delete('/:id', async (req, res, next) => {
+blogRouter.delete('/:id', async (req, res) => {
 	const user = req.user
 	if (!user) {
     return res.status(401).json({ error: 'user not authenticated' })
@@ -60,16 +63,20 @@ blogRouter.delete('/:id', async (req, res, next) => {
 	console.log('WHOS THE USER HERE IN DELETE?', user)
 
 	const blog = await Blog.findById(req.params.id)
-	if (blog.user.toString() === user.id.toString()) {
+
+	console.log('blog.user', blog)
+
+	if (!blog.user) {
+		await Blog.findByIdAndRemove(req.params.id)
+		res.status(204).end()
+	}
+	else if (blog.user.toString() === user.id.toString()) {
 		await Blog.findByIdAndRemove(req.params.id)
 		res.status(204).end()
 	}
 	else {
 		return res.status(401).json({ error: 'user has no rights to delete this blog.' })
 	}
-
-
 })
-
 
 module.exports = blogRouter
