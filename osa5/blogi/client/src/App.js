@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import Loginform from './components/Loginform'
 import Newblog from './components/Newblog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 
 import blogService from './services/blogs'
@@ -33,6 +34,8 @@ const App = () => {
 			blogService.setToken(user.token)
 		}
 	}, [])
+
+	const blogFormRef = useRef()
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
@@ -86,6 +89,7 @@ const App = () => {
 			setTimeout(() => {
 				setErrorMessage(null)
 			}, 5000)
+			blogFormRef.current.toggleVisibility()
 		}
 		catch (exception) {
 			console.error('error when adding', exception)
@@ -129,10 +133,12 @@ const App = () => {
 				  <h2>blogs</h2>
 					<Notification message={errorMessage} />
 					<p>{user.name} logged in <button onClick={logout}>log out</button></p>
-					<Newblog handleAddBlog={handleAddBlog} title={title} setTitle={setTitle}
-						 author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}
-						 errorMessage={errorMessage}
-					/>
+					<Togglable buttonLabel='new blog' ref={blogFormRef}>
+						<Newblog handleAddBlog={handleAddBlog} title={title} setTitle={setTitle}
+							author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}
+							errorMessage={errorMessage}
+						/>
+					</Togglable>
 					{blogs.map(blog =>
 						<Blog key={blog.id} blog={blog} handleDeleteBlog={handleDeleteBlog} />
 					)}
