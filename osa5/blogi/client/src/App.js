@@ -15,9 +15,6 @@ const App = () => {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState('')
-	const [title, setTitle] = useState('')
-	const [author, setAuthor] = useState('')
-	const [url, setUrl] = useState('')
 	const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
@@ -71,17 +68,15 @@ const App = () => {
 		window.location.reload()
 	}
 
-	const handleAddBlog = async (event) => {
-		event.preventDefault()
+	const handleAddBlog = async (blogObject) => {
+		// event.preventDefault()
 		try {
-			const blog = await blogService.addBlog({
-				title, author, url
-			})
-			console.log('BLOG', blog.message)
+			const blog = await blogService.addBlog(
+				// title, author, url
+				blogObject,
+			)
+			console.log('BLOG', blog)
 			setBlogs(blogs.concat(blog.savedBlog))
-			setTitle('')
-			setAuthor('')
-			setUrl('')
 			setErrorMessage({
 				message: blog.message,
 				style: { color: 'green' }
@@ -104,10 +99,13 @@ const App = () => {
 	}
 
 	const handleDeleteBlog = async (blogId) => {
+		console.log('alku', blogId)
 		try {
 			console.log('BLOGID', blogId)
-			await blogService.deleteBlog(blogId)
-			setBlogs(blogs.filter((blog) => blog.id !== blogId))
+			if (window.confirm(`Remove blog ${blogId.title} by ${blogId.author}`)) {
+				await blogService.deleteBlog(blogId.id)
+				setBlogs(blogs.filter((blog) => blog.id !== blogId.id))
+			}
 		}
 		catch (error) {
 			console.error('Error deleting blog', error)
@@ -120,7 +118,17 @@ const App = () => {
 			}, 5000)
 		}
 	}
-	// console.table(blogs.map(blog => blog.id))
+
+	const addLike = async (blog) => {
+		try {
+			const response = await blogService.updateBlog(blog.id, blog)
+			setBlogs(blogs.map((b) => (b.id === blog.id ? { ...blog, likes: response.likes } : b)))
+		} catch (error) {
+			console.error('Add Like fukked up');
+		}
+	}
+
+
 	return (
     <div>
 			{!user &&
@@ -133,14 +141,23 @@ const App = () => {
 				  <h2>blogs</h2>
 					<Notification message={errorMessage} />
 					<p>{user.name} logged in <button onClick={logout}>log out</button></p>
-					<Togglable buttonLabel='new blog' ref={blogFormRef}>
-						<Newblog handleAddBlog={handleAddBlog} title={title} setTitle={setTitle}
-							author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}
-							errorMessage={errorMessage}
+					<Togglable ref={blogFormRef}
+						buttonLabel='create new blog'
+						cancelLabel='cancel'
+					>
+						<Newblog
+							createBlog={handleAddBlog}
 						/>
 					</Togglable>
-					{blogs.map(blog =>
-						<Blog key={blog.id} blog={blog} handleDeleteBlog={handleDeleteBlog} />
+					{blogs
+						.slice()
+						.sort((a, b) => b.likes - a.likes)
+						.map(blog =>
+							<Blog key={blog.id} blog={blog}
+								handleDeleteBlog={() => handleDeleteBlog(blog)}
+								addLike={() => addLike(blog)}
+								user={user}
+						/>
 					)}
 				</>
 			}

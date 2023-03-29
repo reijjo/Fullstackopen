@@ -33,16 +33,27 @@ const getBlog = async (id) => {
 		headers: { Authorization: token }
 	}
 	console.log('BACKEND', id)
-	await axios.get(`${baseUrl}/${id}`, config)
+	const response = await axios.get(`${baseUrl}/${id}`, config)
+	return response.data
 }
+
+const updateBlog = async (id, updatedObject) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.put(`${baseUrl}/${id}`, updatedObject, config);
+  return response.data;
+};
+
 
 const deleteBlog = async (id) => {
 	const config = {
 		headers: { Authorization: token }
 	}
+	console.log('service', id)
 	await axios.delete(`${baseUrl}/${id}`, config)
 }
 
-const blogService = { setToken, getAll, addBlog, getBlog, deleteBlog }
+const blogService = { setToken, getAll, addBlog, getBlog, updateBlog, deleteBlog }
 
 export default blogService
