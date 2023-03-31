@@ -1,8 +1,6 @@
 import { useState } from 'react'
-// const Loginform = ({
-// 	handleSubmit, handleUsernameChange,handlePasswordChange,
-// 	username, password,
-// }) => {
+// import PropTypes from 'prop-types'
+
 const Loginform = ({ login }) => {
 	const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -43,3 +41,9 @@ const Loginform = ({ login }) => {
 }
 
 export default Loginform
+
+// Loginform.propTypes = {
+// 	handleLogin: PropTypes.func.isRequired,
+// 	username: PropTypes.string.isRequired,
+// 	password: PropTypes.string.isRequired,
+// }

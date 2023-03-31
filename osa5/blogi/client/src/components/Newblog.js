@@ -28,6 +28,7 @@ const Newblog = ({ createBlog }) => {
 						type='text'
 						value={newTitle}
 						name='Title'
+						placeholder='Note Title'
 						onChange={event => setNewTitle(event.target.value)}
 					/>
 				</div>
@@ -37,6 +38,7 @@ const Newblog = ({ createBlog }) => {
 						type='text'
 						value={newAuthor}
 						name='Author'
+						placeholder='Note Author'
 						onChange={event => setNewAuthor(event.target.value)}
 					/>
 				</div>
@@ -46,6 +48,7 @@ const Newblog = ({ createBlog }) => {
 						type='text'
 						value={newUrl}
 						name='Url'
+						placeholder='Note Url'
 						onChange={event => setNewUrl(event.target.value)}
 					/>
 				</div>

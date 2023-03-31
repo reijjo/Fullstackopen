@@ -56,8 +56,8 @@ const App = () => {
 				style: { color: 'red' }
 			})
 			setTimeout(() => {
-				setErrorMessage(null);
-			}, 5000);
+				setErrorMessage(null)
+			}, 5000)
 		}
 		console.log('logging in with', username, password)
 	}
@@ -124,7 +124,7 @@ const App = () => {
 			const response = await blogService.updateBlog(blog.id, blog)
 			setBlogs(blogs.map((b) => (b.id === blog.id ? { ...blog, likes: response.likes } : b)))
 		} catch (error) {
-			console.error('Add Like fukked up');
+			console.error('Add Like fukked up')
 		}
 	}
 
@@ -138,7 +138,7 @@ const App = () => {
 			/>}
 			{user &&
 				<>
-				  <h2>blogs</h2>
+					<h2>blogs</h2>
 					<Notification message={errorMessage} />
 					<p>{user.name} logged in <button onClick={logout}>log out</button></p>
 					<Togglable ref={blogFormRef}

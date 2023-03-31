@@ -18,10 +18,10 @@ const Blog = ({ blog, handleDeleteBlog, addLike, user }) => {
 		console.log('TEST user', user.username, 'BLOG', blog.user.username)
 		return (
 			<>
-				<div>
+				<div className='blog-url'>
 					{blog.url}
 				</div>
-				<div>
+				<div className='blog-likes'>
 					likes {blog.likes} <button onClick={() => addLike(blog)}>like</button>
 				</div>
 				<div>
@@ -32,11 +32,11 @@ const Blog = ({ blog, handleDeleteBlog, addLike, user }) => {
 	}
 
 
-	console.log('taallta', blog)
+	// console.log('taallta', blog)
 	return (
 		<div style={blogStyle}>
-  		<div key={blog.id}>
-    		{blog.title} {blog.author}
+			<div key={blog.id} className='title-author'>
+				{blog.title} {blog.author}
 					<button onClick={toggleText}>{buttonText}</button>
 					{buttonText === 'hide' ? (
 						<>

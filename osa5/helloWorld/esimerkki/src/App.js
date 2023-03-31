@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
 import Notification from './components/Notification'
@@ -16,7 +17,7 @@ const App = () => {
   // const [username, setUsername] = useState('')
   // const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
+  // const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     noteService
@@ -73,6 +74,7 @@ const App = () => {
           setNotes(notes.map(note => note.id !== id ? note : returnedNote))
         })
         .catch(error => {
+					console.log(error)
           setErrorMessage(
             `Note '${note.content}' was already removed from server`
           )

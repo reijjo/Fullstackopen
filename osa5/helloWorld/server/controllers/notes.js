@@ -18,7 +18,7 @@ const getTokenFrom = req => {
 }
 
 
-notesRouter.post('/', async (req, res, next) => {
+notesRouter.post('/', async (req, res) => {
 	console.log('Request received at POST /api/notes');
 
 	const body = req.body
@@ -49,7 +49,7 @@ notesRouter.post('/', async (req, res, next) => {
 	res.status(201).json(savedNote)
 })
 
-notesRouter.get('/:id', async (req, res, next) => {
+notesRouter.get('/:id', async (req, res) => {
 	const note = await Note.findById(req.params.id)
 	if (note) {
 		res.json(note)
@@ -74,7 +74,7 @@ notesRouter.put('/:id', (req, res, next) => {
 		.catch(error => next(error))
 })
 
-notesRouter.delete('/:id', async (req, res, next) => {
+notesRouter.delete('/:id', async (req, res) => {
 	await Note.findByIdAndRemove(req.params.id)
 	res.status(204).end()
 })
