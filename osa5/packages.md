@@ -14,8 +14,17 @@ lisaa package.json =>
 lisaa eslintrc.js =>
 	"env": {
 		...,
-		"cypress/globals": true
-	}
+		"cypress/globals": true	<- THIS
+	},
+	'plugins': [
+		...,
+		'cypress'	<-THIS
+	],
+	'extends': [
+		...,
+		'plugin:cypress/recommended'	<-- THIS
+	]
+
 
 # BACKEND
 lisaa package.json =>

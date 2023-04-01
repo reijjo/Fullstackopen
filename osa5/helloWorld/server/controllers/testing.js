@@ -10,6 +10,8 @@ router.post('/reset', async (request, response) => {
   await Note.deleteMany({})
   await User.deleteMany({})
 
+	response.status(200).json({ message: 'database reset succesful' })
+
   response.status(204).end()
 })
 
