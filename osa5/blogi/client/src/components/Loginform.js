@@ -11,6 +11,7 @@ const Loginform = ({ handleLogin, username, setUsername, password, setPassword, 
 			<div>
 				username
 				<input
+					id='username'
 					type='text'
 					value={username}
 					name='Username'
@@ -20,6 +21,7 @@ const Loginform = ({ handleLogin, username, setUsername, password, setPassword, 
 			<div>
 				password
 				<input
+					id='passwd'
 					type='password'
 					value={password}
 					name='Password'
