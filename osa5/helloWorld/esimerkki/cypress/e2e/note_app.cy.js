@@ -1,13 +1,13 @@
 describe('Note ', function() {
   beforeEach(function() {
-    cy.visit('http://localhost:3000')
-    cy.request('POST', 'http://localhost:3001/api/testing/reset')
+    cy.visit('/')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Matti Luukkainen',
       username: 'mluukkai',
       password: 'salainen'
     }
-    cy.request('POST', 'http://localhost:3001/api/users/', user)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user)
   })
 
   it('front page can be opened', function() {
@@ -41,11 +41,11 @@ describe('Note ', function() {
 
   describe('when logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3001/api/login', {
+      cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
 				username: 'mluukkai', password: 'salainen'
 			}).then(response => {
 				localStorage.setItem('loggedNoteappUser', JSON.stringify(response.body))
-				cy.visit('http://localhost:3000')
+				cy.visit('/')
 			})
     })
 
