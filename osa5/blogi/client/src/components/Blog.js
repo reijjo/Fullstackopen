@@ -24,7 +24,7 @@ const Blog = ({ blog, handleDeleteBlog, addLike, user }) => {
 				<div className='blog-likes'>
 					likes {blog.likes} <button onClick={() => addLike(blog)}>like</button>
 				</div>
-				<div>
+				<div className='blogcreator'>
 					{blog.user.name}
 				</div>
 			</>
@@ -34,7 +34,7 @@ const Blog = ({ blog, handleDeleteBlog, addLike, user }) => {
 
 	// console.log('taallta', blog)
 	return (
-		<div style={blogStyle}>
+		<div style={blogStyle} className='blog'>
 			<div key={blog.id} className='title-author'>
 				{blog.title} {blog.author}
 					<button onClick={toggleText}>{buttonText}</button>
