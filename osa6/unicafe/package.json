@@ -1,5 +1,5 @@
 {
-  "name": "redux-example",
+  "name": "unicafe-redux",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -37,7 +37,6 @@
     ]
   },
   "devDependencies": {
-    "deep-freeze": "^0.0.1",
-    "jest": "^27.5.1"
+    "deep-freeze": "^0.0.1"
   }
 }
