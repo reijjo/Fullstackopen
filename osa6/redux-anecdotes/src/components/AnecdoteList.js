@@ -4,7 +4,7 @@ import { showNotif } from "../reducers/notificationReducer";
 
 const AnecdoteList = ({ anecdote }) => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector((state) => {
+  const anecdotesState = useSelector((state) => {
     console.log("STATE", state);
     if (state.filter === "ALL") {
       return state.anecdote;
@@ -14,7 +14,9 @@ const AnecdoteList = ({ anecdote }) => {
     );
   });
 
-  const mostVotes = anecdotes.slice().sort((a, b) => b.votes - a.votes);
+  console.log('TYPE', typeof anecdotesState)
+  console.dir(anecdotesState)
+  const mostVotes = anecdotesState.slice().sort((a, b) => b.votes - a.votes);
 
   return (
     <>
