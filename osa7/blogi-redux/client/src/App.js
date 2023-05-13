@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { setMessage, clearMessage } from "./messageActions";
+import { setMessage, clearMessage, addBlog, addBlogLike } from "./reduxActions";
 
 import Blog from "./components/Blog";
 import Loginform from "./components/Loginform";
@@ -11,15 +11,26 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { connect } from "react-redux";
 
-const App = ({ message, setMessage, clearMessage }) => {
-  const [blogs, setBlogs] = useState([]);
+const App = ({ message, setMessage, clearMessage, addBlog, blogs }) => {
+  // const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
-  // const [errorMessage, setErrorMessage] = useState(null)
+
+  // useEffect(() => {
+  //   blogService.getAll().then((blogs) => setBlogs(blogs));
+  // }, []);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    const fetchBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll();
+        blogs.forEach((blog) => addBlog(blog));
+      } catch (exception) {
+        console.error("Error fetching blogs", exception);
+      }
+    };
+    fetchBlogs();
   }, []);
 
   useEffect(() => {
@@ -47,14 +58,6 @@ const App = ({ message, setMessage, clearMessage }) => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      // console.log('EXX', exception.response.data.error)
-      // setErrorMessage({
-      // 	message: exception.response.data.error,
-      // 	style: { color: 'red' }
-      // })
-      // setTimeout(() => {
-      // 	setErrorMessage(null)
-      // }, 5000)
       setMessage({
         message: exception.response.data.error,
         style: { color: "red" },
@@ -68,26 +71,15 @@ const App = ({ message, setMessage, clearMessage }) => {
 
   const logout = () => {
     window.localStorage.removeItem("loggedIn");
-    // window.localStorage.clear()
     window.location.reload();
   };
 
   const handleAddBlog = async (blogObject) => {
-    // event.preventDefault()
     try {
-      const blog = await blogService.addBlog(
-        // title, author, url
-        blogObject
-      );
+      const blog = await blogService.addBlog(blogObject);
       console.log("BLOG", blog);
-      setBlogs(blogs.concat(blog.savedBlog));
-      // setErrorMessage({
-      // 	message: blog.message,
-      // 	style: { color: 'green' }
-      // })
-      // setTimeout(() => {
-      // 	setErrorMessage(null)
-      // }, 5000)
+      // setBlogs(blogs.concat(blog.savedBlog));
+      addBlog(blog.savedBlog);
       setMessage({
         message: blog.message,
         style: { color: "green" },
@@ -98,13 +90,6 @@ const App = ({ message, setMessage, clearMessage }) => {
       blogFormRef.current.toggleVisibility();
     } catch (exception) {
       console.error("error when adding", exception);
-      // setErrorMessage({
-      // 	message: 'Something strange happened.',
-      // 	style: { color: 'red' }
-      // })
-      // setTimeout(() => {
-      // 	setErrorMessage(null)
-      // }, 5000)
       setMessage({
         message: message,
         style: { color: "red" },
@@ -121,17 +106,10 @@ const App = ({ message, setMessage, clearMessage }) => {
       console.log("BLOGID", blogId);
       if (window.confirm(`Remove blog ${blogId.title} by ${blogId.author}`)) {
         await blogService.deleteBlog(blogId.id);
-        setBlogs(blogs.filter((blog) => blog.id !== blogId.id));
+        // setBlogs(blogs.filter((blog) => blog.id !== blogId.id));
       }
     } catch (error) {
       console.error("Error deleting blog", error);
-      // setErrorMessage({
-      // 	message: error.response.data.error || 'Something went wrong while deleting the blog',
-      // 	style: { color: 'red' }
-      // })
-      // setTimeout(() => {
-      // 	setErrorMessage(null)
-      // }, 5000)
       setMessage({
         message:
           error.response.data.error ||
@@ -144,14 +122,21 @@ const App = ({ message, setMessage, clearMessage }) => {
     }
   };
 
-  const addLike = async (blog) => {
+  const addLike = async (blog, addBlogLike) => {
     try {
-      const response = await blogService.updateBlog(blog.id, blog);
-      setBlogs(
-        blogs.map((b) =>
-          b.id === blog.id ? { ...blog, likes: response.likes } : b
-        )
-      );
+      const updatedBlog = { ...blog, likes: blog.likes + 1 };
+      const response = await blogService.updateBlog(blog.id, updatedBlog);
+      console.log("resp", response);
+      // const response = await blogService.updateBlog(blog.id, blog);
+      // setBlogs(
+      //   blogs.map((b) =>
+      //     b.id === blog.id ? { ...blog, likes: response.likes } : b
+      //   )
+      // );
+      // addBlog({ ...blog, likes: response.likes });
+      // const updateBlog = { ...blog, likes: response.likes };
+      console.log("props.addBlogLike:", addBlogLike); // Add this line
+      addBlogLike(response);
     } catch (error) {
       console.error("Add Like fukked up");
     }
@@ -166,14 +151,12 @@ const App = ({ message, setMessage, clearMessage }) => {
           setUsername={setUsername}
           password={password}
           setPassword={setPassword}
-          // errorMessage={errorMessage}
         />
       )}
       {user && (
         <>
           <h2>blogs</h2>
           <Notification message={message} />
-          {/* <Notification message={errorMessage} /> */}
           <p>
             {user.name} logged in <button onClick={logout}>log out</button>
           </p>
@@ -192,7 +175,7 @@ const App = ({ message, setMessage, clearMessage }) => {
                 key={blog.id}
                 blog={blog}
                 handleDeleteBlog={() => handleDeleteBlog(blog)}
-                addLike={() => addLike(blog)}
+                addLike={() => addLike(blog, addBlogLike)}
                 user={user}
               />
             ))}
@@ -204,11 +187,19 @@ const App = ({ message, setMessage, clearMessage }) => {
 
 const mapStateToProps = (state) => ({
   message: state.message,
+  blogs: state.blog,
 });
 
-const mapDispatchToProps = {
-  setMessage,
-  clearMessage,
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setMessage: (message) => dispatch(setMessage(message)),
+    clearMessage: () => dispatch(clearMessage()),
+    addBlog: (blogObject) => dispatch(addBlog(blogObject)),
+    addBlogLike: (blogObject) => {
+      console.log("Dispatching addBlogLike action", blogObject);
+      dispatch(addBlogLike(blogObject));
+    },
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
