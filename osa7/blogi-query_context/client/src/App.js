@@ -1,28 +1,26 @@
-import { useState, useEffect, useRef } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { setQueryToken, getQueryAll, addQueryBlog } from "./requests";
+import { useState, useEffect } from "react";
+// import { useMutation, useQuery, useQueryClient } from "react-query";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { setQueryToken } from "./requests";
 
-import Blog from "./components/Blog";
 import Loginform from "./components/Loginform";
-import Newblog from "./components/Newblog";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { useMessageValue } from "./MessageContext";
+import WhosIn from "./components/WhosIn";
+import Blogs from "./components/Blogs";
+import Users from "./components/Users";
+import OneUser from "./components/OneUser";
+import BlogInfo from "./components/BlogInfo";
 
 const App = () => {
-  // const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
-  // const [errorMessage, setErrorMessage] = useState(null);
 
-  const queryClient = useQueryClient();
   const [notification, setNotification] = useMessageValue();
-  const newBlogMutation = useMutation(addQueryBlog);
-  // console.log("notificatio", setNotification);
 
   useEffect(() => {
     const loggedIn = window.localStorage.getItem("loggedIn");
@@ -33,16 +31,6 @@ const App = () => {
       setQueryToken(user.token);
     }
   }, []);
-
-  const blogFormRef = useRef();
-
-  const blogsResult = useQuery("blogs", getQueryAll);
-
-  if (blogsResult.isLoading) {
-    return <div>loading data...</div>;
-  }
-
-  const blogs = blogsResult.data;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -58,11 +46,6 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      // console.log('EXX', exception.response.data.error)
-      // setErrorMessage({
-      //   message: exception.response.data.error,
-      //   style: { color: "red" },
-      // });
       setNotification({
         type: "SHOW_MESSAGE",
         payload: {
@@ -70,7 +53,6 @@ const App = () => {
         },
       });
       setTimeout(() => {
-        // setErrorMessage(null);
         setNotification({
           type: "CLEAR_MESSAGE",
         });
@@ -81,92 +63,8 @@ const App = () => {
 
   const logout = () => {
     window.localStorage.removeItem("loggedIn");
-    // window.localStorage.clear()
     window.location.reload();
   };
-
-  const handleAddBlog = async (blogObject) => {
-    newBlogMutation.mutate(blogObject, {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries("blogs");
-        console.log("BLOG", data);
-        console.log("BLOG MESS", data.message);
-        setNotification({
-          type: "SHOW_MESSAGE",
-          payload: {
-            message: data.message,
-            style: { color: "green" },
-          },
-        });
-        setTimeout(() => {
-          setNotification({
-            type: "CLEAR_MESSAGE",
-          });
-        }, 5000);
-        blogFormRef.current.toggleVisibility();
-      },
-      onError: (error) => {
-        console.error("error when adding", error);
-        setNotification({
-          type: "SHOW_MESSAGE",
-          payload: {
-            message: "Something strange happened.",
-            style: { color: "red" },
-          },
-        });
-        setTimeout(() => {
-          setNotification({
-            type: "CLEAR_MESSAGE",
-          });
-        }, 5000);
-      },
-    });
-  };
-
-  const handleDeleteBlog = async (blogId) => {
-    console.log("alku", blogId);
-    try {
-      console.log("BLOGID", blogId);
-      if (window.confirm(`Remove blog ${blogId.title} by ${blogId.author}`)) {
-        await blogService.deleteBlog(blogId.id);
-        // setBlogs(blogs.filter((blog) => blog.id !== blogId.id));
-      }
-    } catch (error) {
-      console.error("Error deleting blog", error);
-      // setErrorMessage({
-      //   message:
-      //     error.response.data.error ||
-      //     "Something went wrong while deleting the blog",
-      //   style: { color: "red" },
-      // });
-      setNotification({
-        type: "SHOW_MESSAGE",
-        payload: {
-          message: error.response.data.error,
-          style: { color: "red" },
-        },
-      });
-      setTimeout(() => {
-        // setErrorMessage(null);
-        setNotification({
-          type: "CLEAR_MESSAGE",
-        });
-      }, 5000);
-    }
-  };
-
-  // const addLike = async (blog) => {
-  //   try {
-  // const response = await blogService.updateBlog(blog.id, blog);
-  // setBlogs(
-  //   blogs.map((b) =>
-  //     b.id === blog.id ? { ...blog, likes: response.likes } : b
-  //   )
-  // );
-  //   } catch (error) {
-  //     console.error("Add Like fukked up");
-  //   }
-  // };
 
   return (
     <div>
@@ -177,38 +75,28 @@ const App = () => {
           setUsername={setUsername}
           password={password}
           setPassword={setPassword}
-          // errorMessage={errorMessage}
           errorMessage={notification}
         />
       )}
       {user && (
-        <>
-          <h2>blogs</h2>
-          <Notification message={notification} />
-          {/* <Notification message={errorMessage} /> */}
-          <p>
-            {user.name} logged in <button onClick={logout}>log out</button>
-          </p>
-          <Togglable
-            ref={blogFormRef}
-            buttonLabel="create new blog"
-            cancelLabel="cancel"
-          >
-            <Newblog createBlog={handleAddBlog} />
-          </Togglable>
-          {blogs
-            .slice()
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                handleDeleteBlog={() => handleDeleteBlog(blog)}
-                // addLike={() => addLike(blog)}
-                user={user}
+        <Router>
+          <>
+            <WhosIn user={user} logout={logout} />
+            <h2>blog app</h2>
+            <Notification message={notification} />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Blogs user={user} setNotification={setNotification} />
+                }
               />
-            ))}
-        </>
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<OneUser />} />
+              <Route path="/blogs/:id" element={<BlogInfo />} />
+            </Routes>
+          </>
+        </Router>
       )}
     </div>
   );

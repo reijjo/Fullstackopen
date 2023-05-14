@@ -2,6 +2,7 @@
 /* eslint-disable quotes */
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 // -- API/BLOGS
 
@@ -45,12 +46,14 @@ blogRouter.post("/", async (req, res) => {
 
 // -- API/BLOGS/:ID
 
-blogRouter.get("/:id"),
-  async (req, res) => {
-    const getIt = await Blog.findById(req.params.id);
-    console.log("controller", req.params.id);
-    res.json(getIt);
-  };
+blogRouter.get("/:id", async (req, res) => {
+  const id = req.params;
+  const blog = await Blog.findById(id.id);
+
+  console.log("blog", blog.user);
+  const user = await User.findById(blog.user);
+  res.json({ blog, user });
+});
 
 blogRouter.put("/:id", async (req, res) => {
   const body = req.body;
@@ -85,6 +88,28 @@ blogRouter.delete("/:id", async (req, res) => {
       .status(401)
       .json({ error: "user has no rights to delete this blog." });
   }
+});
+
+// blogRouter.get("/:id/comments", async (req, res) => {
+//   const id = req.params;
+//   const blogs = await Blog.findById(id.id);
+
+//   res.json(blogs);
+// });
+
+blogRouter.post("/:id/comments", async (req, res) => {
+  const id = req.params;
+  const comment = req.body.comment;
+
+  console.log("hep", comment);
+
+  const blog = await Blog.findById(id.id);
+  blog.comments = blog.comments.concat(comment);
+  const updateBlog = await blog.save();
+
+  console.log("updatedBlog", updateBlog);
+
+  res.json(updateBlog);
 });
 
 module.exports = blogRouter;
