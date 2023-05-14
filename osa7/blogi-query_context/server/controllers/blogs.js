@@ -90,13 +90,6 @@ blogRouter.delete("/:id", async (req, res) => {
   }
 });
 
-// blogRouter.get("/:id/comments", async (req, res) => {
-//   const id = req.params;
-//   const blogs = await Blog.findById(id.id);
-
-//   res.json(blogs);
-// });
-
 blogRouter.post("/:id/comments", async (req, res) => {
   const id = req.params;
   const comment = req.body.comment;
