@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
 const Book = require("./models/book");
+const User = require("./models/user");
 require("dotenv").config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -167,7 +168,7 @@ const typeDefs = `
 
 		createUser(
 			username: String!
-			favoriteGenre: String!
+			favoriteGenre: String
 		): User
 
 		login(
@@ -266,6 +267,15 @@ const resolvers = {
     // },
     addBook: async (root, args, context) => {
       const author = await Author.findOne({ name: args.author });
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        throw new GraphQLError("not authenticated", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
 
       if (!author) {
         if (args.author.length < 4) {
@@ -315,6 +325,38 @@ const resolvers = {
       authors = authors.map((a) => (a.name === args.name ? updatedAuthor : a));
       return updatedAuthor;
     },
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError("Creating the user failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+            error,
+          },
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        throw new GraphQLError("wrong credentials", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
+    // addFavoriteGenre: async (root, args, {currentUser}) => {
+    // 	const noGenres = (genre) => !currentUser.favoriteGenre
+    // }
   },
 };
 
@@ -325,6 +367,25 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null;
+    console.log("AUTH", auth);
+    if (auth && auth.startsWith("Bearer ")) {
+      const token = auth.substring(7);
+      try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("DECODED", decodedToken);
+        // const currentUser = await User.findById(decodedToken.id).populate(
+        //   "friends"
+        // );
+        const currentUser = await User.findById(decodedToken.id);
+        return { currentUser };
+      } catch (error) {
+        console.log("<><><><><><>ERRIR", error);
+      }
+      return {};
+    }
+  },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
 });
