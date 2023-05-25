@@ -30,7 +30,7 @@ const parseArgs = (args: string[]): Hours => {
   };
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyExercises: number[],
   target: number
 ): Result => {
@@ -46,7 +46,7 @@ const calculateExercises = (
   if (success) {
     rating = 3;
     ratingDesc = "Nice";
-  } else if (avgTime >= target - 2) {
+  } else if (avgTime >= target - 1) {
     rating = 2;
     ratingDesc = "not too bad but could be better";
   }

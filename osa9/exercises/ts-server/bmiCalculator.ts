@@ -19,7 +19,7 @@ const parseArguments = (args: string[]): Values => {
   }
 };
 
-const calculateBmi = (cm: number, kg: number): string => {
+export const calculateBmi = (cm: number, kg: number): string => {
   const cmToM = cm / 100;
   const bmi = kg / (cmToM * cmToM);
 
