@@ -14,6 +14,10 @@ app.get("/api/ping", (_req, res) => {
   res.send("pong");
 });
 
+app.get("/api/patients", (_req, res) => {
+  res.send("moikka oon potilas");
+});
+
 app.listen(PORT, () => {
   console.log(`Server on port ${PORT}`);
 });
