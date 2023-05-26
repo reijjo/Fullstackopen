@@ -2,9 +2,9 @@ import { v1 as uuid } from "uuid";
 import patients from "../../data/patients";
 
 import {
+  NewPatientEntry,
   NonSensitivePatientEntry,
   PatientEntry,
-  NewPatientEntry,
 } from "../types";
 
 const randomId = uuid();
