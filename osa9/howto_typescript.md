@@ -249,4 +249,53 @@ Let's add an npm script for running the application in production mode in packag
 }
 ```
 
-When we run the app with npm start, we can verify that the production build also works:
+When we run the app with npm start, we can verify that the production build also works
+
+# Frontend:
+
+npx create-react-app my-app --template typescript
+
+## make .eslintrc file
+
+```json
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["react", "@typescript-eslint"],
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "react/react-in-jsx-scope": 0
+  }
+}
+```
+
+## package.json file
+
+```json
+{
+  // ...
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint './src/**/*.{ts,tsx}'" /* add this line */
+  }
+  // ...
+}
+```
