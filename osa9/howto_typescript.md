@@ -299,3 +299,24 @@ npx create-react-app my-app --template typescript
   // ...
 }
 ```
+
+## index.tsx
+
+```tsx
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <App />
+);
+```
+
+## App.tsx
+
+```tsx
+const App = () => {
+  return <div>hi</div>;
+};
+
+export default App;
+```
