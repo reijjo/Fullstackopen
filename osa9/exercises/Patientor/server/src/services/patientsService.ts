@@ -5,6 +5,7 @@ import {
   NewPatientEntry,
   NonSensitivePatientEntry,
   PatientEntry,
+  NonSensitivePatient,
 } from "../types";
 
 const randomId = uuid();
@@ -14,13 +15,16 @@ const getPatients = (): PatientEntry[] => {
 };
 
 const getNonSensitiveEntries = (): NonSensitivePatientEntry[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-  }));
+  return patients.map(
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+      entries,
+    })
+  );
 };
 
 const addPatient = (
@@ -44,8 +48,15 @@ const addPatient = (
   return newPatientEntry;
 };
 
+const getNonSensitivePatient = (
+  id: string
+): NonSensitivePatient | undefined => {
+  return patients.find((pati) => pati.id === id);
+};
+
 export default {
   getPatients,
   getNonSensitiveEntries,
   addPatient,
+  getNonSensitivePatient,
 };

@@ -37,4 +37,13 @@ router.post("/", (req, res) => {
   // res.json(addedPatient);
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+  if (id) {
+    res.send(patientsService.getNonSensitivePatient(id));
+  } else {
+    res.status(404).send("Patient not found");
+  }
+});
+
 export default router;
