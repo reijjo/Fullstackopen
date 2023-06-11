@@ -29,6 +29,13 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     throw new Error("Incorrect or missing data");
   }
 
+  // const parseDiagnosisCodes = (object: unknown): Array<Diagnoses['code']> => {
+  // 	if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
+  // 		return [] as Array<Diagnoses['code']>;
+  // 	}
+  // 	return object.diagnosisCodes as Array<Diagnoses['code']>;
+  // };
+
   if (
     "name" in object &&
     "dateOfBirth" in object &&

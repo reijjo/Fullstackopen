@@ -8,10 +8,6 @@ router.get("/", (_req, res) => {
   res.send(patientsService.getNonSensitiveEntries());
 });
 
-// router.get("/", (_req, res) => {
-//   res.send(patientsService.getPatients());
-// });
-
 router.post("/", (req, res) => {
   // const { name, dateOfBirth, ssn, gender, occupation } = req.body;
   try {
@@ -45,5 +41,9 @@ router.get("/:id", (req, res) => {
     res.status(404).send("Patient not found");
   }
 });
+
+// router.post('/:id/entries', (req, res) => {
+
+// })
 
 export default router;

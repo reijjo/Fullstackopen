@@ -46,11 +46,6 @@ export interface Patient {
   entries: Entry[];
 }
 
-export type Entry =
-  | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
-
 interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
   healthCheckRating: HealthCheckRating;
@@ -59,7 +54,7 @@ interface HealthCheckEntry extends BaseEntry {
 interface OccupationalHealthcareEntry extends BaseEntry {
   type: "OccupationalHealthcare";
   employerName: string;
-  sickLeave: {
+  sickLeave?: {
     endDate: string;
     startDate: string;
   };
@@ -72,6 +67,11 @@ interface HospitalEntry extends BaseEntry {
     criteria: string;
   };
 }
+
+export type Entry =
+  | HospitalEntry
+  | OccupationalHealthcareEntry
+  | HealthCheckEntry;
 
 export type NonSensitivePatient = Omit<Patient, "ssn" | "entries">;
 
