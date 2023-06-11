@@ -1,0 +1,22 @@
+{
+  "plugins": ["react", "react-native"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "babelOptions": {
+      "configFile": "/Users/reijjo/workspace/Fullstackopen/osa10/rate-repository-app/babel.config.js"
+    }
+  },
+  "env": {
+    "react-native/react-native": true
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  }
+}
